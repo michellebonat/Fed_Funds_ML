@@ -1,19 +1,13 @@
 # Description: This file converts the raw FOMC Statements into cleaner
-#              versions of themselves. In addition to basic cleaning,
-#              the file performs some of the preprocessing steps described
-#              in Acosta and Meade "Hanging on every word: Semantic analysis of the
-#              FOMC's postmeeting statement" (2015).
-#              It also creates a term-document matrix (tdm) for each type of cleaning
-#              described in the 'output' section below.
-#              The original author of this file and script is Miguel Acosta www.acostamiguel.com
-#              and it has been reused for this project with only minor changes.
+#              versions of themselves.
 #
-#              This file significantly reuses an open source version for the cleaning.
-#              It has been modified from it's originally published version which used python2.
+#              This file leverages an open source version for the cleaning.
+#              The content has been modified from it's originally published version and
+#              adapted for python3.
 #              The author of that original version is Miguel Acosta  www.acostamiguel.com
 #
 # Input:       The raw FOMC statements, downloaded from federalreserve.gov
-#              by the python script pullStatements.py. These should be
+#              by the python script pullStatements.py. These are
 #              located in the directory statements/statements.raw
 #
 # Output:      Two sets of cleaned FOMC statements:
@@ -25,9 +19,6 @@
 #                    information removed. They have also been stemmed, words
 #                    have been concatenated, and numbers/stopwords
 #                    have been removed.
-#              Three files for each type of preprocessing: a sparse form of the
-#              tdm, a list of words and a list of documents that compose the
-#              tdm.
 #
 #--------------------------------- IMPORTS -----------------------------------#
 import os, csv, re
@@ -44,7 +35,7 @@ statementdir = os.path.join('statements','statements.raw')
 # Where the clean statements will go (with and without preprocessing)
 cleanDir     = os.path.join('statements','statements.clean')
 cleanDirNP   = os.path.join('statements','statements.clean.np')
-# Where the tdms should go
+# Where the cleaned documents should go
 outputDir    = 'output'
 
 #-----------------------------------------------------------------------------#
@@ -59,8 +50,6 @@ def getReplacementList (list_name):
     newWords = [allWords[i] for i in range(len(allWords)) if i % 2 == 1]
     return [oldWords, newWords]
 
-
-
 #-----------------------------------------------------------------------------#
 # cleanStatement: This function is the meat of this code--it performs all of the
 #   cleaning/preprocessing described in the header of this document. It's
@@ -71,10 +60,9 @@ def getReplacementList (list_name):
 #     (4) locationnew : Directory where clean statements go (string)
 #     (5) stoplist    : A list of words to remove (list of strings)
 #     (6) charsToKeep : A regular expression of the character types to keep
-#     (7) stem        : A logical for whether to stem the words
 #-----------------------------------------------------------------------------#
 def cleanStatement (statement, locationold, replacements, locationnew, \
-                    stoplist, charsToKeep, stem):
+                    stoplist, charsToKeep):
     # Read in the statement and convert it to lower case
     original  = open(os.path.join(locationold,statement),'r').read().lower()
 
@@ -115,58 +103,10 @@ def cleanStatement (statement, locationold, replacements, locationnew, \
     for word in stoplist:
         clean = clean.replace(' '+word.lower() + ' ', ' ')
 
-    # Stem words
-    if stem == 1:
-        stemmer = LancasterStemmer()
-        stemmed = [stemmer.stem(w) for w in clean.split()]
-        clean   = ''
-        for w in stemmed:
-            clean = clean + w + ' '
-
     # Write cleaned file
     new = open(os.path.join(locationnew,statement), 'w')
     new.write(clean)
     new.close
-
-#-----------------------------------------------------------------------------#
-# createtdm: Creates a term-document matrix (tdm), using the code in
-#   textmining_withnumbers, and stores the output in 'data.'
-#   indir is a string indicating the directory from which to create
-#   a term-document matrix, outdir is a string denoting where to store the
-#   output, and fname is the suffix appended to the output file names.
-#   Output files are a sparse form of the tdm, a list of words and a list
-#   of documents that compose the tdm.
-#-----------------------------------------------------------------------------#
-# Commenting this section as it's producing the error L152: TypeError: '>' not supported between instances of 'str' and 'int'
-# def createtdm (indir, outdir, fname):
-#     statementList = [ f for f in listdir(indir) \
-#                        if isfile(join(indir,f)) ]
-#     # Initialize and fill term-document matrix
-#     tdm = TDM()
-#     [tdm.add_doc(open(join(indir,f), 'r').read()) for f in statementList]
-#
-#     # Store the output as a sparse matrix: first column is the row index
-#     # (for words), second is column (for documents), and third is the word count
-#     # Note that these are 0-indexed.
-#     with open(join(outdir,'tdm.sparse' + fname + '.csv'), 'w') as f:
-#         n = -1 # First row in tdm.rows are the word names.
-#         for row in tdm.rows( cutoff = 1): # cutoff is the number of documents
-#                                           # in which a term must appear to be
-#                                           # included.
-#             [f.write(str(n) + ',' + str(t) + ',' + str(row[t]) + '\n')
-#              for t in range(len(row)) if row[t] > 0 and n > -1]
-#             n = n+1
-#
-#     # Store the document names
-#     with open(join(outdir,'tdm.docs' + fname + '.csv'), 'w') as f:
-#         [f.write(filename + '\n') for filename in statementList]
-#
-#     # Store the word names
-#     with open(join(outdir,'tdm.words' + fname + '.csv'), 'w') as f:
-#         n = 0
-#         for row in tdm.rows( cutoff = 1):
-#             [f.write(r + '\n') for r in row if n == 0 ]
-#             n = n+1
 
 #-----------------------------------------------------------------------------#
 # The Main function generates the stop list, and word replacement lists, then
@@ -197,12 +137,6 @@ def main():
         # Second, the no-preprocessing case (keep letters and numbers)
         cleanStatement(statement, statementdir, replacementsNP, \
                        cleanDirNP, stoplistNP, '[^A-Za-z0-9 ]+',0)
-
-    # Commenting this tdm section output as I commented the code above to generate it
-    # Create term-document matrix
-    # createtdm(cleanDir  , outputDir, '')
-    # createtdm(cleanDirNP, outputDir, '.np')
-
 
 if __name__ == "__main__":
     main()
