@@ -3,8 +3,8 @@
 #
 #              This file leverages an open source version for the cleaning.
 #              The content has been modified from it's originally published version and
-#              adapted for python3.
-#              The author of that original version is Miguel Acosta  www.acostamiguel.com
+#              adapted for python3. The author of that original version is
+#              Miguel Acosta  www.acostamiguel.com
 #
 # Input:       The raw FOMC statements, downloaded from federalreserve.gov
 #              by the python script pullStatements.py. These are
@@ -13,12 +13,14 @@
 # Output:      Two sets of cleaned FOMC statements:
 #                (i) A set, located in the directory statements/statements.clean
 #                    of FOMC statements that have had header, footer, and voting
-#                    information removed.
+#                    information removed. These files are currently being used
+#                    in this project.
 #                (ii) A set, located in statements/statements.clean.np
 #                    of FOMC statements that have had header, footer, and voting
 #                    information removed. They have also been stemmed, words
 #                    have been concatenated, and numbers/stopwords
-#                    have been removed.
+#                    have been removed. These files are not currently being used
+#                    in this project.
 #
 #--------------------------------- IMPORTS -----------------------------------#
 import os, csv, re
@@ -113,11 +115,15 @@ def cleanStatement (statement, locationold, replacements, locationnew, \
 #   loops through every file in the statements/statements.raw directory and
 #   performs two types of cleaning: one that is less extensive (saved in
 #   statements/statements.clean) and one that includes more preprocessing steps
-#   (saved in statements/statements.clean.np). 'NP' denotes 'no preprocessing.
-#   Finally, it creates the term-document matrix for each type of cleaning.
+#   (saved in statements/statements.clean.np). Finally, it creates the
+#   term-document matrix for each type of cleaning. 'NP' denotes 'no preprocessing.
+#
+#   Only the files in the statements/statements.clean folder are currently
+#   being used in this project, these are the files with less preprocessing
+#   at this step. More processing happens in the Jupyter Notebook code which
+#   is the file called Data.ipynb.
 #-----------------------------------------------------------------------------#
 
-# To do: clean this up we don't need two versions of the docs
 def main():
     stoplist       = [line.rstrip('\n') for line in \
                       open(os.path.join(datadir,"stoplist_mcdonald_comb.txt")
@@ -138,50 +144,6 @@ def main():
         # Second, the no-preprocessing case (keep letters and numbers)
         cleanStatement(statement, statementdir, replacementsNP, \
                        cleanDirNP, stoplistNP, '[^A-Za-z0-9 ]+',0)
-
-# These steps need to happen later, after train test split
-# Tokenize
-# This breaks text up into its individual words
-def tokenize_sentences(sentences):
-    words = []
-    for sentence in sentences:
-        w = extract_words(sentence)
-        words.extend(w)
-
-    words = sorted(list(set(words)))
-    return words
-
-# Implement a Bag of Words model
-# Takes an input of a sentence and words (our vocabulary). It then extracts the
-# words from the input sentence using the previously defined function.
-# It creates a vector of zeros using numpy zeros function with a length of the
-# number of words in our vocabulary.
-# Next, for each word in our sentence, we loop through our vocabulary and if
-# the word exists we increase the count by 1. It returns the numpy array of frequency counts.
-
-def bagofwords(sentence, words):
-    sentence_words = extract_words(sentence)
-    # frequency word count
-    bag = np.zeros(len(words))
-    for sw in sentence_words:
-        for i, word in enumerate(words):
-            if word == sw:
-                bag[i] += 1
-
-    return np.array(bag)
-
-# Convert sentences to vectors by passing through our Bag of Words model
-# To do: The example sentences below need to be replaced with our content
-sentences = ["Machine learning is great","Natural Language Processing is a complex field","Natural Language Processing is used in machine learning"]
-vocabulary = tokenize_sentences(sentences)
-
-bagofwords("Machine learning is great", vocabulary)
-
-# Use scikit learn Count Vectorizer instead of the above
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer(analyzer = "word", tokenizer = None, preprocessor = None, stop_words = None, max_features = 5000)
-train_data_features = vectorizer.fit_transform(sentences)
-vectorizer.transform(["Machine learning is great"]).toarray()
 
 if __name__ == "__main__":
     main()
