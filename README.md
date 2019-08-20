@@ -8,6 +8,12 @@ The FOMC is the policy governing body of the US Federal Reserve Bank which is th
 For a detailed overview of this project see the pdf in this repo called "Fed_Funds_ML_Project_Report". 
 This report includes sections on project overview, data wrangling, statistical analysis, and machine learning.
 
+## Running the Project
+
+Use this on the command line to start your Jupyter Notebook to get more processing power else it will stall out:
+
+```jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000```
+
 ## Contributing
 
 This was built my Michelle Bonat. It's not currently open for contributions, but I would love to hear any comments and suggestions about how you have modified this code. 
