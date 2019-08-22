@@ -16,7 +16,7 @@ Use this on the command line to start your Jupyter Notebook to get more processi
 
 ## Contributing
 
-This was built my Michelle Bonat. It's not currently open for contributions, but I would love to hear any comments and suggestions about how you have modified this code. 
+This was built by Michelle Bonat. It's not currently open for contributions, but I would love to hear any comments and suggestions about how you have modified this code. 
 Contact me through the methods noted below. 
 
 ## Authors
