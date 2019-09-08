@@ -5,7 +5,13 @@ This is a personal project to demonstrate whether Federal Funds rate changes can
 using FOMC meetings minutes, by leveraging machine learning, primarily NLP (Natural Language Processing). 
 The FOMC is the policy governing body of the US Federal Reserve Bank which is the central bank of the US.
 
-For a detailed overview of this project see the pdf in this repo called "Fed_Funds_ML_Project_Report". 
+The results achieved were a 94% prediction rate on test data (unseen data). I used four different machine 
+learning models: Naive Bayes, Logistic Regression, Support Vector Machine (SVM), and Decision Trees. 
+The model that worked best was Naive Bayes. 
+
+To see a presentation of this project online [click here](http://bit.ly/Fed_Funds_NLP). 
+
+For a detailed wriiten overview of this project see the pdf in this repo called "Fed_Funds_ML_Project_Report". 
 This report includes sections on project overview, data wrangling, statistical analysis, and machine learning.
 
 ## Running the Project
